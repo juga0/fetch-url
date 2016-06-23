@@ -1,4 +1,4 @@
-# fetch_url
+# fetch-url
 
 Work in progress...
 
@@ -23,8 +23,8 @@ Check https://virtualenv.pypa.io/en/latest/installation.html or if Debian equal/
     source ~/.virtualenvs/oiienv/bin/activate
 
 #### Install dependencies in virtualenv
-    git clone https://lab.openintegrity.org/openintegrity-agents/fetch_url.git
-    cd fetch_url
+    git clone https://lab.openintegrity.org/agents/fetch-url.git
+    cd fetch-url
     pip install -r requirements.txt
 
 ## Configuration
@@ -33,4 +33,5 @@ TBD
 
 ## Running
 
-  nameko run fetch_url
+    cd fetch-url/fetch_url
+    nameko run fetch_url
