@@ -2,76 +2,80 @@
 from nameko.web.handlers import http
 from werkzeug.wrappers import Response
 from werkzeug import exceptions
+from os.path import join
 import json
+import yaml
+import logging
+import logging.config
+# from logger import LoggingDependency
+from config import CONFIG, FS_PATH, ANALYSE_URL
+try:
+    from agents_common.etag_requests import get_ismodified
+    from agents_common.policies_util import generate_hash
+    from agents_common.scraper_utils import url2filename
+except:
+    from config import AGENTS_MODULE_PATH
+    import sys
+    sys.path.append(AGENTS_MODULE_PATH)
+    from agents_common.etag_requests import get_ismodified
+    from agents_common.policies_util import generate_hash
+    from agents_common.scraper_utils import url2filename
+from fetch_utils import retrive_hash_store, store_html, analyse_url
+
+logging.basicConfig(level=logging.DEBUG)
+with open(CONFIG) as fle:
+    config = yaml.load(fle)
+if "LOGGING" in config:
+    logging.config.dictConfig(config['LOGGING'])
+logger = logging.getLogger(__name__)
+
 
 class FetchURLService(object):
     name = "fetchurl"
 
-    # @http('GET', '/privileged')
-    # def forbidden(self, request):
-    #     return 403, "Forbidden"
-    #
-    # @http('GET', '/headers')
-    # def redirect(self, request):
-    #     return 201, {'Location': 'https://www.example.com/widget/1'}, ""
 
-    @http('GET', '/fetchurl/<string:url>/<string:etag>/<string:last_modified>')
-    def fetch_url(self, request, url, etag, last_modified):
+    # FIXME: temporally getting the values as POST data cause string:url
+    # causes 409
+    @http('POST', '/fetchurl')
+    def fetch_url(self, request):
         """
-        /a/v/t is for entity/attribute/value/transaction
-        {
-          e: "https://guardianproject.info/home/data-usage-and-protection-policies/",
-          a: "etag",
-          v: E43A29F57...,
-          t: {
-              id: "watch-url",
-              agent: $AGENT_ID,
-              timestamp: $AGENT_TIMESTAMP
-          }
-        }
         """
-        if request.method != "GET":
-          raise exceptions.MethodNotAllowed
-        # TODO: get url from website, returning this for now
-        return Response(json.dumps({'url': url, 'etag': etag}))
-        # ismodified, content, headers = get_ismodified(url, etag_db, last_modified_db)
-
-
-    @http('POST', '/post')
-    def do_post(self, request):
         if request.method != "POST":
-          raise exceptions.MethodNotAllowed
-        return "received: {}".format(request.get_data(as_text=True))
-
-    # if not request.content_type.startswith('application/json'):
-    #   raise exceptions.BadRequest
-    # try:
-    #   data = json.loads(request.data)
-    # except ValueError, e:
-    #   resdata = {'jsonrpc':'2.0',
-    #              'id':None,
-    #              'error':{'code':PARSE_ERROR,
-    #                       'message':errors[PARSE_ERROR]}}
-    #
-    # else:
-    #   if isinstance(data, dict):
-    #     resdata = self.process(data)
-    #   elif isinstance(data, list):
-    #     if len([x for x in data if not isinstance(x, dict)]):
-    #       resdata = {'jsonrpc':'2.0',
-    #                  'id':None,
-    #                  'error':{'code':INVALID_REQUEST,
-    #                           'message':errors[INVALID_REQUEST]}}
-    #     else:
-    #       resdata = [d for d in (self.process(d) for d in data)
-    #                  if d is not None]
-    #
-    #
-    # response = Response(content_type="application/json")
-    #
-    # if resdata:
-    #   response.headers["Cache-Control"] = "no-cache"
-    #   response.headers["Pragma"] = "no-cache"
-    #   response.headers["Expires"] = "-1"
-    #   response.data = json.dumps(resdata)
-    # return response(environ, start_response)
+            raise exceptions.MethodNotAllowed
+        logger.debug('request: %s', request)
+        # FIXME: is this the best way to obtain post payload?
+        #        or should insted use .form or .vaules or .data?
+        data = request.get_data()
+        logger.debug('data %s', data)
+        json_data = json.loads(data)
+        logger.debug('json data %s', json_data)
+        # logger.debug('request form : %s', request.form)
+        # logger.debug('request values : %s', request.values)
+        # logger.debug('request data : %s', request.data)
+        url = json_data.get('key')
+        logger.debug('key: %s', url)
+        header = json_data.get('header')
+        content = json_data.get('content')
+        logger.debug('type content %s', type(content))
+        if content:
+            logger.debug("len content %s", len(content))
+        if header:
+            etag = header.get('ETag')
+            logger.debug('etag: %s', etag)
+            last_modified = header.get('Last-Modified')
+            logger.debug('last_modified: %s', last_modified)
+            # print request.data
+            # content = request.get_data('content', as_text=True)
+            # content = request.values.get('content')
+        ismodified, response = get_ismodified(
+                                        url, etag=etag,
+                                        last_modified=last_modified)
+        if ismodified:
+            hash_page_html = generate_hash(content, response.encoding)
+            filepath = join(FS_PATH, url2filename(url) + hash_page_html)
+            hash_in_fs = retrive_hash_store(filepath)
+            if not hash_in_fs:
+                logger.info('hash is not in the file system')
+                store_html(filepath, content)
+                analyse_url(ANALYSE_URL, url, hash_page_html)
+            return Response(json.dumps({'url': url}))
