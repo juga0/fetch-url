@@ -67,15 +67,19 @@ class FetchURLService(object):
             # print request.data
             # content = request.get_data('content', as_text=True)
             # content = request.values.get('content')
-        ismodified, response = get_ismodified(
+        ismodified, r = get_ismodified(
                                         url, etag=etag,
                                         last_modified=last_modified)
         if ismodified:
-            hash_page_html = generate_hash(content, response.encoding)
+            # get content in unicode, either of this works
+            unicode_content = unicode( r.content, r.encoding )
+            unicode_content = r.text
+            hash_page_html = generate_hash(unicode_content, r.encoding)
             filepath = join(FS_PATH, url2filename(url) + hash_page_html)
             hash_in_fs = retrive_hash_store(filepath)
             if not hash_in_fs:
                 logger.info('hash is not in the file system')
                 store_html(filepath, content)
-                analyse_url(ANALYSE_URL, url, hash_page_html)
+                analyse_url(ANALYSE_URL, url, hash_page_html, etag,
+                            last_modified)
             return Response(json.dumps({'url': url}))

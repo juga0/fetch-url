@@ -17,7 +17,7 @@ AGENT_ID = 'agent-tos-1'
 # configuration yaml file. All the configuration here could go there
 CONFIG = join(ROOT_PATH, 'config.yaml')
 
-FS_PATH = join(PROJECT_PATH, 'data', 'urls')
+FS_PATH = join(PROJECT_PATH, 'data')
 
 # analyse-url configuration
 # FIXME: temporal url for development
