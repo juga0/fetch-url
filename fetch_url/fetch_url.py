@@ -3,12 +3,12 @@ from nameko.web.handlers import http
 from werkzeug.wrappers import Response
 from werkzeug import exceptions
 from os.path import join
+import sys
 import json
-import yaml
 import logging
 import logging.config
 # from logger import LoggingDependency
-from config import CONFIG, FS_PATH, ANALYSE_URL
+from config import FS_PATH, ANALYSE_URL_URL, SERVICE_NAME
 try:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
@@ -20,23 +20,25 @@ except:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
     from agents_common.scraper_utils import url2filename
-from fetch_utils import retrive_hash_store, store_html, analyse_url
+from fetch_utils import retrieve_hash_store, save_content_store, analyse_url
 
 logging.basicConfig(level=logging.DEBUG)
-with open(CONFIG) as fle:
-    config = yaml.load(fle)
-if "LOGGING" in config:
-    logging.config.dictConfig(config['LOGGING'])
+try:
+    from config import LOGGING
+    logging.config.dictConfig(LOGGING)
+except ImportError:
+    print "Couldn't find LOGGING in config.py"
 logger = logging.getLogger(__name__)
 
 
 class FetchURLService(object):
-    name = "fetchurl"
-
+    name = SERVICE_NAME
 
     # FIXME: temporally getting the values as POST data cause string:url
     # causes 409
-    @http('POST', '/fetchurl')
+    # TODO: handle errors
+    # TODO: use nameko events
+    @http('POST', '/' + SERVICE_NAME)
     def fetch_url(self, request):
         """
         """
@@ -49,37 +51,38 @@ class FetchURLService(object):
         logger.debug('data %s', data)
         json_data = json.loads(data)
         logger.debug('json data %s', json_data)
-        # logger.debug('request form : %s', request.form)
-        # logger.debug('request values : %s', request.values)
-        # logger.debug('request data : %s', request.data)
         url = json_data.get('key')
         logger.debug('key: %s', url)
         header = json_data.get('header')
-        content = json_data.get('content')
-        logger.debug('type content %s', type(content))
-        if content:
-            logger.debug("len content %s", len(content))
+        # NOTE: the content is not needed
+        # content = json_data.get('content')
+        # logger.debug('type content %s', type(content))
+        # if content:
+        #     logger.debug("len content %s", len(content))
         if header:
             etag = header.get('ETag')
             logger.debug('etag: %s', etag)
             last_modified = header.get('Last-Modified')
             logger.debug('last_modified: %s', last_modified)
-            # print request.data
-            # content = request.get_data('content', as_text=True)
-            # content = request.values.get('content')
-        ismodified, r = get_ismodified(
-                                        url, etag=etag,
-                                        last_modified=last_modified)
+        ismodified, r = get_ismodified(url, etag=etag,
+                                       last_modified=last_modified)
         if ismodified:
-            # get content in unicode, either of this works
-            unicode_content = unicode( r.content, r.encoding )
+            # NOTE: get content in unicode, either of this works
+            # unicode_content = unicode( r.content, r.encoding )
             unicode_content = r.text
             hash_page_html = generate_hash(unicode_content, r.encoding)
             filepath = join(FS_PATH, url2filename(url) + hash_page_html)
-            hash_in_fs = retrive_hash_store(filepath)
+            hash_in_fs = retrieve_hash_store(filepath)
             if not hash_in_fs:
-                logger.info('hash is not in the file system')
-                store_html(filepath, content)
-                analyse_url(ANALYSE_URL, url, hash_page_html, etag,
-                            last_modified)
-            return Response(json.dumps({'url': url}))
+                logger.info('Hash is not in the file system.')
+                save_content_store(filepath, unicode_content)
+                # TODO: if in watch the trigger url is obtain from config
+                # where the url for analyse will be get?
+                # FIXME: pass here all the dict as in watch_url
+                r = analyse_url(ANALYSE_URL_URL, url, hash_page_html, etag,
+                                last_modified)
+                if r != 200:
+                    sys.exit()
+            return Response(status=200)
+
+# TODO: add main

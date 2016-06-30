@@ -7,18 +7,17 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def retrive_hash_store(filepath):
+def retrieve_hash_store(filepath):
     """
     """
     # filepath = join(dirpath, url + hash_content)
     logger.debug('checking whether %s exists', filepath)
     if isfile(filepath):
-        logger.info('html with with path %s exists', filepath)
         return True
     return False
 
 
-def store_html(filepath, content, encoding='utf-8'):
+def save_content_store(filepath, content, encoding='utf-8'):
     """
     """
     # filepath = join(dirpath, url + hash_page_html)
@@ -43,14 +42,3 @@ def analyse_url(url_analyse_url, url, hash_content, etag, last_modified):
     }
     r = requests.post(url_analyse_url, json=data)
     return r.status_code
-
-
-def scraper_rule(rule_json):
-    page = requests.get(rule_json['url'])
-    tree = html.fromstring(page.content)
-    e = tree.xpath(rule_json['xpath'])
-    html_text = etree.tostring(e[0])
-    md = html2md(html_text)
-    return mddef scraper_tos(rules_json):
-    for rule_json in rules_json:
-        scraper_rule(rule_json)

@@ -1,6 +1,5 @@
-"""fetch-rul configuration."""
+"""Configuration for fetch-url agent."""
 from os.path import join, abspath, dirname
-
 
 BASE_PATH = abspath(__file__)
 # BASE_PATH = abspath('.')
@@ -11,17 +10,16 @@ ROOT_PROJECT_PATH = dirname(PROJECT_PATH)
 AGENTS_MODULE_DIR = 'agents-common-code'
 AGENTS_MODULE_PATH = join(ROOT_PROJECT_PATH, AGENTS_MODULE_DIR)
 
-# FIXME: the ide should be generated other way
-AGENT_ID = 'agent-tos-1'
-
-# configuration yaml file. All the configuration here could go there
-CONFIG = join(ROOT_PATH, 'config.yaml')
+AGENT_TYPE = 'fetch-url'
+SERVICE_NAME = 'fetchurl'
 
 FS_PATH = join(PROJECT_PATH, 'data')
 
 # analyse-url configuration
 # FIXME: temporal url for development
-ANALYSE_URL = 'http://127.0.0.1:8001/analyseurl'
+ANALYSE_URL_DOMAIN = 'http://127.0.0.1:8002'
+ANALYSE_URL_NAME = 'analyseurl'
+ANALYSE_URL_URL = '/'.join([ANALYSE_URL_DOMAIN, ANALYSE_URL_NAME])
 
 # rabbitmq configuration
 AMQP_CONFIG = {'AMQP_URI': 'amqp://guest:guest@localhost'}
@@ -29,42 +27,26 @@ AMQP_CONFIG = {'AMQP_URI': 'amqp://guest:guest@localhost'}
 # logging configuration
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': True,
+    'disable_existing_loggers': False,
     'formatters': {
         'simple': {
             'format': "%(levelname)s:%(name)s - %(module)s - %(message)s"
         }
     },
-    'filters': {
-        'require_debug_false': {
-            '()': 'django.utils.log.RequireDebugFalse'
-        }
-    },
     'handlers': {
-        'mail_admins': {
-            'level': 'ERROR',
-            'filters': ['require_debug_false'],
-            'class': 'django.utils.log.AdminEmailHandler',
-            'include_html': True,
-        },
         'console': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         }
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['mail_admins'],
-            'level': 'ERROR',
-            'propagate': False,
-        },
-        'nameko': {
-            'level': 'DEBUG',
-            'handlers': ['console']
-        }
-    },
+    # 'loggers': {
+    #     'nameko': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['console']
+    #     }
+    # },
     'root': {
-        'level': 'INFO',
+        'level': 'DEBUG',
         'handlers': ['console']
     }
 }

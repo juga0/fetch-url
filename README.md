@@ -34,4 +34,4 @@ TBD
 ## Running
 
     cd fetch-url/fetch_url
-    nameko run fetch_url
+    nameko run fetch_url --config config.yaml
