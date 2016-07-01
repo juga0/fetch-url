@@ -12,14 +12,14 @@ from config import FS_PATH, ANALYSE_URL_URL, SERVICE_NAME
 try:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
-    from agents_common.scraper_utils import url2filename
+    from agents_common.scraper_utils import url2filenamedashes
 except:
     from config import AGENTS_MODULE_PATH
     import sys
     sys.path.append(AGENTS_MODULE_PATH)
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
-    from agents_common.scraper_utils import url2filename
+    from agents_common.scraper_utils import url2filenamedashes
 from fetch_utils import retrieve_hash_store, save_content_store, analyse_url
 
 logging.basicConfig(level=logging.DEBUG)
@@ -60,9 +60,9 @@ class FetchURLService(object):
         # if content:
         #     logger.debug("len content %s", len(content))
         if header:
-            etag = header.get('ETag')
+            etag = header.get('etag')
             logger.debug('etag: %s', etag)
-            last_modified = header.get('Last-Modified')
+            last_modified = header.get('last_modified')
             logger.debug('last_modified: %s', last_modified)
         ismodified, r = get_ismodified(url, etag=etag,
                                        last_modified=last_modified)
@@ -70,17 +70,21 @@ class FetchURLService(object):
             # NOTE: get content in unicode, either of this works
             # unicode_content = unicode( r.content, r.encoding )
             unicode_content = r.text
-            hash_page_html = generate_hash(unicode_content, r.encoding)
-            filepath = join(FS_PATH, url2filename(url) + hash_page_html)
-            hash_in_fs = retrieve_hash_store(filepath)
+            hash_html = generate_hash(unicode_content, r.encoding)
+            html_filepath = join(FS_PATH, url2filenamedashes(url),
+                                 hash_html + '.html')
+            hash_in_fs = retrieve_hash_store(html_filepath)
             if not hash_in_fs:
                 logger.info('Hash is not in the file system.')
-                save_content_store(filepath, unicode_content)
+                save_content_store(html_filepath, unicode_content)
                 # TODO: if in watch the trigger url is obtain from config
                 # where the url for analyse will be get?
+                # FIXME: remove hash in the data
+                json_data['sha256'] = hash_html
                 # FIXME: pass here all the dict as in watch_url
-                r = analyse_url(ANALYSE_URL_URL, url, hash_page_html, etag,
-                                last_modified)
+                # r = analyse_url(ANALYSE_URL_URL, url, hash_html, etag,
+                #                 last_modified)
+                r = analyse_url(ANALYSE_URL_URL, json_data)
                 if r != 200:
                     sys.exit()
             return Response(status=200)

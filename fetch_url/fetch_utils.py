@@ -13,6 +13,7 @@ def retrieve_hash_store(filepath):
     # filepath = join(dirpath, url + hash_content)
     logger.debug('checking whether %s exists', filepath)
     if isfile(filepath):
+        logger.debug('file exists')
         return True
     return False
 
@@ -20,25 +21,35 @@ def retrieve_hash_store(filepath):
 def save_content_store(filepath, content, encoding='utf-8'):
     """
     """
-    # filepath = join(dirpath, url + hash_page_html)
+    logger.debug('writing content to %s', filepath)
+    logger.debug('content type %s', type(content))
     if not isdir(dirname(filepath)):
         logger.debug('creating dir %s', dirname(filepath))
         makedirs(dirname(filepath))
-    logger.debug('writing content to %s', filepath)
     with open(filepath, 'w') as f:
         f.write(content.encode(encoding))
 
-def analyse_url(url_analyse_url, url, hash_content, etag, last_modified):
+
+def post_store(url, data, only_status_code=False):
+    logger.debug('POST url %s' % url)
+    if isinstance(data, dict):
+        r = requests.post(url, json=data)
+    else:
+        r = requests.post(url, data=data)
+    if only_status_code:
+        return r.status_code
+    return r
+
+
+# def analyse_url(url_analyse_url, url, hash_content, etag, last_modified):
+def analyse_url(url, data):
+
     """
     """
-    # complete_url = '/'.join([url, hash_content])
-    # logger.debug('get url %s with sha %s' % (url, hash_content))
-    # r = requests.get(complete_url)
-    data = {
-        'url': url,
-        'hash': hash_content,
-        'etag': etag,
-        'last_modified': last_modified
-    }
-    r = requests.post(url_analyse_url, json=data)
-    return r.status_code
+    # data = {
+    #     'url': url,
+    #     'hash': hash_content,
+    #     'etag': etag,
+    #     'last_modified': last_modified
+    # }
+    return post_store(url, data, only_status_code=True)
