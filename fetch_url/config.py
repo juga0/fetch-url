@@ -17,9 +17,9 @@ FS_PATH = join(PROJECT_PATH, 'data')
 
 # analyse-url configuration
 # FIXME: temporal url for development
-ANALYSE_URL_DOMAIN = 'http://127.0.0.1:8002'
-ANALYSE_URL_NAME = 'analyseurl'
-ANALYSE_URL_URL = '/'.join([ANALYSE_URL_DOMAIN, ANALYSE_URL_NAME])
+ANALYSE_PAGE_DOMAIN = 'http://127.0.0.1:8002'
+ANALYSE_PAGE_NAME = 'analyseurl'
+ANALYSE_PAGE_URL = '/'.join([ANALYSE_PAGE_DOMAIN, ANALYSE_PAGE_NAME])
 
 # rabbitmq configuration
 AMQP_CONFIG = {'AMQP_URI': 'amqp://guest:guest@localhost'}

@@ -8,7 +8,7 @@ import json
 import logging
 import logging.config
 # from logger import LoggingDependency
-from config import FS_PATH, ANALYSE_URL_URL, SERVICE_NAME
+from config import FS_PATH, ANALYSE_PAGE_URL, SERVICE_NAME
 try:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
@@ -82,9 +82,9 @@ class FetchURLService(object):
                 # FIXME: remove hash in the data
                 json_data['sha256'] = hash_html
                 # FIXME: pass here all the dict as in watch_url
-                # r = analyse_url(ANALYSE_URL_URL, url, hash_html, etag,
+                # r = analyse_url(ANALYSE_PAGE_URL, url, hash_html, etag,
                 #                 last_modified)
-                r = analyse_url(ANALYSE_URL_URL, json_data)
+                r = analyse_url(ANALYSE_PAGE_URL, json_data)
                 if r != 200:
                     sys.exit()
             return Response(status=200)
