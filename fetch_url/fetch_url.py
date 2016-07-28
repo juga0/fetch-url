@@ -1,25 +1,28 @@
 """fetch_url."""
-from nameko.web.handlers import http
-from werkzeug.wrappers import Response
-from werkzeug import exceptions
-from os.path import join
 import sys
 import json
 import logging
 import logging.config
-# from logger import LoggingDependency
-from config import FS_PATH, ANALYSE_PAGE_URL, SERVICE_NAME
+
+from nameko.web.handlers import http
+from werkzeug.wrappers import Response
+from werkzeug import exceptions
+from os.path import join
+
 try:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
     from agents_common.scraper_utils import url2filenamedashes
 except:
     from config import AGENTS_MODULE_PATH
-    import sys
     sys.path.append(AGENTS_MODULE_PATH)
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
     from agents_common.scraper_utils import url2filenamedashes
+
+from config import ANALYSE_PAGE_URL, SERVICE_NAME
+from config_common import FS_PATH
+
 from fetch_utils import retrieve_hash_store, save_content_store, analyse_url
 
 logging.basicConfig(level=logging.DEBUG)

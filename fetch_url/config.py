@@ -1,52 +1,38 @@
 """Configuration for fetch-url agent."""
-from os.path import join, abspath, dirname
+from os import environ
+from config_common import NAME_SEPARATOR, AGENT_NAME, AGENT_SUFFIX,\
+    STORE_URL, STORE_CONFIG_DB
 
-BASE_PATH = abspath(__file__)
-# BASE_PATH = abspath('.')
-ROOT_PATH = dirname(BASE_PATH)
-PROJECT_PATH = dirname(ROOT_PATH)
-ROOT_PROJECT_PATH = dirname(PROJECT_PATH)
-# in case agents-common-code is not installed, the path to it is requered
-AGENTS_MODULE_DIR = 'agents-common-code'
-AGENTS_MODULE_PATH = join(ROOT_PROJECT_PATH, AGENTS_MODULE_DIR)
+AGENT_TYPE = 'fetch'
+SERVICE_NAME = 'fetch_page_tos'
 
-AGENT_TYPE = 'fetch-url'
-SERVICE_NAME = 'fetchurl'
+# configuration that depends on common constants
+STORE_DB = environ.get('STORE_CONFIG_DOC') or \
+    NAME_SEPARATOR.join([AGENT_NAME, AGENT_SUFFIX])
+STORE_DB_URL = '/'.join([STORE_URL, STORE_DB])
 
-FS_PATH = join(PROJECT_PATH, 'data')
+STORE_LATEST_VIEW = "_design/" + STORE_DB +\
+    """/_view/latest?reduce=true&group_level=2&""" \
+    """startkey=["%s"]&endkey=["%s",{}]"""
+STORE_LATEST_VIEW_URL = '/'.join([STORE_DB_URL, STORE_LATEST_VIEW])
+# STORE_LATEST_VIEW_URL = """https://staging-store.openintegrity.org/github-repo-issues/_design/github-repo-issues/_view/latest?reduce=true&group_level=2&startkey=["%s"]&endkey=["%s",{}]"""
 
-# analyse-url configuration
-# FIXME: temporal url for development
-ANALYSE_PAGE_DOMAIN = 'http://127.0.0.1:8002'
-ANALYSE_PAGE_NAME = 'analyseurl'
+STORE_UPDATE_DOC = "_design/" + STORE_DB + "/_update/timestamped/%s"
+STORE_UPDATE_DOC_URL = '/'.join([STORE_DB_URL, STORE_UPDATE_DOC])
+# STORE_UPDATE_DOC_URL = "https://staging-store.openintegrity.org/github-repo-issues/_design/github-repo-issues/_update/timestamped/analyse-github-repo-issues-84.251.91.165-https-guardianproject.info-home-data-usage-and-protection-policies--etag"
+
+STORE_CONFIG_DOC = environ.get('STORE_CONFIG_DOC') or \
+                    NAME_SEPARATOR.join([AGENT_NAME, AGENT_SUFFIX])
+STORE_CONFIG_URL = '/'.join([STORE_URL, STORE_CONFIG_DB, STORE_CONFIG_DOC])
+# STORE_CONFIG_URL = https://staging-store.openintegrity.org/config/page-tos-juga
+
+# configuration specific for fetch
+###################################
+ANALYSE_PAGE_HOST = environ.get('ANALYSE_PAGE_HOST')
+ANALYSE_PAGE_PORT = environ.get('ANALYSE_PAGE_PORT')
+if ANALYSE_PAGE_HOST and ANALYSE_PAGE_PORT:
+    ANALYSE_PAGE_DOMAIN = ":".join(["http://", ANALYSE_PAGE_HOST, ANALYSE_PAGE_PORT])
+else:
+    ANALYSE_PAGE_DOMAIN = 'http://127.0.0.1:8001'
+ANALYSE_PAGE_NAME = 'analyse_page_tos'
 ANALYSE_PAGE_URL = '/'.join([ANALYSE_PAGE_DOMAIN, ANALYSE_PAGE_NAME])
-
-# rabbitmq configuration
-AMQP_CONFIG = {'AMQP_URI': 'amqp://guest:guest@localhost'}
-
-# logging configuration
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'simple': {
-            'format': "%(levelname)s:%(name)s - %(module)s - %(message)s"
-        }
-    },
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple'
-        }
-    },
-    # 'loggers': {
-    #     'nameko': {
-    #         'level': 'DEBUG',
-    #         'handlers': ['console']
-    #     }
-    # },
-    'root': {
-        'level': 'DEBUG',
-        'handlers': ['console']
-    }
-}
