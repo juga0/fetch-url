@@ -22,7 +22,7 @@ else:
     # check that the key is in the file
     WEB_SERVER_ADDRESS = c.get(WEB_SERVER_ADDRESS)
     if WEB_SERVER_ADDRESS is None:
-        WEB_SERVER_ADDRESS = '127.0.0.1:8000'
+        WEB_SERVER_ADDRESS = '127.0.0.1:8001'
         c['WEB_SERVER_ADDRESS'] = WEB_SERVER_ADDRESS
         with open('config.yml', 'w') as f:
             s = yaml.dump(c)

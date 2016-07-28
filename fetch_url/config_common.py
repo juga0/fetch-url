@@ -44,3 +44,35 @@ AGENT_PAYLOAD = """{
     },
     "content": "%(content)"
 }"""
+
+# nameko
+############################
+# rabbitmq configuration
+AMQP_CONFIG = {'AMQP_URI': 'amqp://guest:guest@localhost'}
+
+# logging configuration
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': "%(levelname)s:%(name)s - %(module)s - %(message)s"
+        }
+    },
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        }
+    },
+    # 'loggers': {
+    #     'nameko': {
+    #         'level': 'DEBUG',
+    #         'handlers': ['console']
+    #     }
+    # },
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['console']
+    }
+}

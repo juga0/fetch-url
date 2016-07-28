@@ -35,16 +35,16 @@ Check https://virtualenv.pypa.io/en/latest/installation.html or if Debian equal/
 To change the host/port in which this agent listen, modify `config.yml` or
 create the environment variables:
 
-    FETCH_PAGE_HOST='watchhost'
-    FETCH_PAGE_PORT='watchport'
+    FETCH_PAGE_HOST='fetchhost'
+    FETCH_PAGE_PORT='fetchport'
 
 and run `set_ip_port.py`
 
 To change the host/port in which the analyse- agent listen, modify `config.py` or
 create the following environment variables:
 
-    ANALYSE_PAGE_HOST='fetchhost'
-    ANALYSE_PAGE_PORT='fetchport'
+    ANALYSE_PAGE_HOST='analysehost'
+    ANALYSE_PAGE_PORT='analyseport'
 
 Other variable that can be changed in `config.py` or via environment variables:
  * `STORE_CONFIG_DB` name of the DB where the agents will find their
@@ -56,5 +56,5 @@ Other variable that can be changed in `config.py` or via environment variables:
 ## Running
 
     cd fetch_url
-    nameko run fetch_url
+    nameko run fetch_url --config fetch_url
 

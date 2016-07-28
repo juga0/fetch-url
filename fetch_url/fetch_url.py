@@ -87,6 +87,8 @@ class FetchURLService(object):
                 # FIXME: pass here all the dict as in watch_url
                 # r = analyse_url(ANALYSE_PAGE_URL, url, hash_html, etag,
                 #                 last_modified)
+                logger.debug('Going to request analyse_url %s' %
+                             ANALYSE_PAGE_URL)
                 r = analyse_url(ANALYSE_PAGE_URL, json_data)
                 if r != 200:
                     sys.exit()
