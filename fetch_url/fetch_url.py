@@ -2,12 +2,13 @@
 import sys
 import json
 import logging
+
+from os.path import join
 import logging.config
 
 from nameko.web.handlers import http
 from werkzeug.wrappers import Response
 from werkzeug import exceptions
-from os.path import join
 
 try:
     from agents_common.etag_requests import get_ismodified
@@ -25,20 +26,20 @@ from config_common import FS_PATH
 
 from fetch_utils import retrieve_hash_store, save_content_store, analyse_url
 
-logging.basicConfig(level=logging.DEBUG)
+
 try:
-    from config import LOGGING
+    from config_common import LOGGING
     logging.config.dictConfig(LOGGING)
 except ImportError:
     print "Couldn't find LOGGING in config.py"
+    logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
 class FetchURLService(object):
     name = SERVICE_NAME
 
-    # FIXME: temporally getting the values as POST data cause string:url
-    # causes 409
+
     # TODO: handle errors
     # TODO: use nameko events
     @http('POST', '/' + SERVICE_NAME)
