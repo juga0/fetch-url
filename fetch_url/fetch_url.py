@@ -14,12 +14,21 @@ try:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
     from agents_common.scraper_utils import url2filenamedashes
-except:
-    from config import AGENTS_MODULE_PATH
-    sys.path.append(AGENTS_MODULE_PATH)
-    from agents_common.etag_requests import get_ismodified
-    from agents_common.policies_util import generate_hash
-    from agents_common.scraper_utils import url2filenamedashes
+except ImportError:
+    print('agents_common is not installed '
+          'or does not contain one of the required modules,'
+          ' trying to find it inside this program path')
+    try:
+        from config import AGENTS_MODULE_PATH
+        sys.path.append(AGENTS_MODULE_PATH)
+        from agents_common.etag_requests import get_ismodified
+        from agents_common.policies_util import generate_hash
+        from agents_common.scraper_utils import url2filenamedashes
+    except ImportError:
+        print('agents_common not found in this program path, '
+              'you need to install it or'
+              ' create a symlink inside this program path')
+        sys.exit()
 
 from config import ANALYSE_PAGE_URL, SERVICE_NAME
 from config_common import FS_PATH
@@ -38,7 +47,6 @@ logger = logging.getLogger(__name__)
 
 class FetchURLService(object):
     name = SERVICE_NAME
-
 
     # TODO: handle errors
     # TODO: use nameko events

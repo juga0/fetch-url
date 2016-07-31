@@ -7,9 +7,12 @@ Work in progress...
 ### System dependencies
 
 `sudo apt-get install python-dev`
-
 For lxml package:
  `sudo apt-get install libxml2-dev libxslt1-dev`
+For PyYAML package:
+`sudo apt-get install libyaml-dev`
+For cryptograpy package:
+`sudo apt-get install libffi-dev`
 
 ### With virtualenv
 
@@ -26,8 +29,9 @@ Check https://virtualenv.pypa.io/en/latest/installation.html or if Debian equal/
     source ~/.virtualenvs/oiienv/bin/activate
 
 #### Install dependencies in virtualenv
-    git clone https://meta.openintegrity.org/agents/fetch-url.git
-    cd fetch-url
+
+    git clone https://meta.openintegrity.org/agents/watch-url.git
+    cd watch-url
     pip install -r requirements.txt
 
 ## Configuration
