@@ -2,43 +2,52 @@
 import sys
 import json
 import logging
+
+from os.path import join
 import logging.config
 
 from nameko.web.handlers import http
 from werkzeug.wrappers import Response
 from werkzeug import exceptions
-from os.path import join
 
 try:
     from agents_common.etag_requests import get_ismodified
     from agents_common.policies_util import generate_hash
     from agents_common.scraper_utils import url2filenamedashes
-except:
-    from config import AGENTS_MODULE_PATH
-    sys.path.append(AGENTS_MODULE_PATH)
-    from agents_common.etag_requests import get_ismodified
-    from agents_common.policies_util import generate_hash
-    from agents_common.scraper_utils import url2filenamedashes
+except ImportError:
+    print('agents_common is not installed '
+          'or does not contain one of the required modules,'
+          ' trying to find it inside this program path')
+    try:
+        from config import AGENTS_MODULE_PATH
+        sys.path.append(AGENTS_MODULE_PATH)
+        from agents_common.etag_requests import get_ismodified
+        from agents_common.policies_util import generate_hash
+        from agents_common.scraper_utils import url2filenamedashes
+    except ImportError:
+        print('agents_common not found in this program path, '
+              'you need to install it or'
+              ' create a symlink inside this program path')
+        sys.exit()
 
 from config import ANALYSE_PAGE_URL, SERVICE_NAME
 from config_common import FS_PATH
 
 from fetch_utils import retrieve_hash_store, save_content_store, analyse_url
 
-logging.basicConfig(level=logging.DEBUG)
+
 try:
-    from config import LOGGING
+    from config_common import LOGGING
     logging.config.dictConfig(LOGGING)
 except ImportError:
     print "Couldn't find LOGGING in config.py"
+    logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
 class FetchURLService(object):
     name = SERVICE_NAME
 
-    # FIXME: temporally getting the values as POST data cause string:url
-    # causes 409
     # TODO: handle errors
     # TODO: use nameko events
     @http('POST', '/' + SERVICE_NAME)
