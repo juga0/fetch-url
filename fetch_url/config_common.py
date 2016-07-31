@@ -79,11 +79,11 @@ LOGGING = {
     #         'level': 'DEBUG',
     #         'handlers': ['console']
     #     }
-        'watch_url': {
+        'fetch_url': {
             'level': 'DEBUG',
             'handlers': ['console']
         },
-        'watch_url_util': {
+        'fetch_utils': {
             'level': 'DEBUG',
             'handlers': ['console']
         }
