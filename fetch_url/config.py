@@ -1,7 +1,7 @@
 """Configuration for fetch-url agent."""
 from os import environ
 from config_common import NAME_SEPARATOR, AGENT_NAME, AGENT_SUFFIX,\
-    STORE_URL, STORE_CONFIG_DB
+    STORE_URL, STORE_CONFIG_DB, PAGE_TYPE
 
 AGENT_TYPE = 'fetch'
 SERVICE_NAME = 'fetch_page_tos'
@@ -10,8 +10,9 @@ SERVICE_NAME = 'fetch_page_tos'
 STORE_DB = environ.get('STORE_CONFIG_DOC') or \
     NAME_SEPARATOR.join([AGENT_NAME, AGENT_SUFFIX])
 STORE_DB_URL = '/'.join([STORE_URL, STORE_DB])
-STORE_LATEST_VIEW = "_design/_view/latest?reduce=true&group_level=2&""" \
-    """startkey=["%s"]&endkey=["%s",{}]"""
+STORE_LATEST_VIEW = '_design/page/_view/latest?reduce=true&group_level=2&' \
+    'startkey=["page","' + PAGE_TYPE + '","%s"]' \
+    '&endkey=["page","' + PAGE_TYPE + '","%s",{}]'
 STORE_LATEST_VIEW_URL = '/'.join([STORE_DB_URL, STORE_LATEST_VIEW])
 # STORE_LATEST_VIEW_URL = """https://staging-store.openintegrity.org/github-repo-issues/_design/github-repo-issues/_view/latest?reduce=true&group_level=2&startkey=["%s"]&endkey=["%s",{}]"""
 

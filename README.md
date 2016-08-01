@@ -42,7 +42,6 @@ create the environment variables:
     FETCH_PAGE_HOST='127.0.0.1' # 127.0.0.1 is the default
     FETCH_PAGE_PORT='8000' # 8000 is the default
 
-and run `set_ip_port.py`
 
 To change the host/port in which the analyse- agent listen, modify `config.py` or
 create the following environment variables:
@@ -65,7 +64,7 @@ Other variable that can be changed in `config.py` or via environment variables:
 
 or
 
-    cd watch_url
+    cd fetch_url
     fetch_pages_tos_service.py
 
 or
