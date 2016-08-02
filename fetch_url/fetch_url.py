@@ -35,14 +35,12 @@ from config_common import FS_PATH
 
 from fetch_utils import retrieve_hash_store, save_content_store, analyse_url
 
+from config_common import LOGGING
+logging.config.dictConfig(LOGGING)
 
-try:
-    from config_common import LOGGING
-    logging.config.dictConfig(LOGGING)
-except ImportError:
-    print "Couldn't find LOGGING in config.py"
-    logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+# print 'LOG LEVEL fetch_url'
+# print logging.getLevelName(logger.getEffectiveLevel())
 
 
 class FetchURLService(object):

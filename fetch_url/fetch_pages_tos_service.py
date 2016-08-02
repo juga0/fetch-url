@@ -10,13 +10,12 @@ from nameko.testing.utils import get_container
 
 from fetch_url import FetchURLService
 
-try:
-    from config_common import LOGGING, CONFIG_YAML_PATH, WEB_SERVER_ADDRESS
-    logging.config.dictConfig(LOGGING)
-except:
-    print 'No LOGGING configuration found.'
-    logging.basicConfig(level=logging.DEBUG)
+from config_common import LOGGING, CONFIG_YAML_PATH, WEB_SERVER_ADDRESS
+logging.config.dictConfig(LOGGING)
+
 logger = logging.getLogger(__name__)
+# print 'LOG LEVEL fetch_pages...'
+# print logging.getLevelName(logger.getEffectiveLevel())
 
 def update_config_yaml(config_dict, path):
     FETCH_PAGE_HOST = environ.get('FETCH_PAGE_HOST')

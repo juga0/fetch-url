@@ -5,7 +5,8 @@ import requests
 import logging
 
 logger = logging.getLogger(__name__)
-
+# print 'LOG LEVEL fetch_utils'
+# print logging.getLevelName(logger.getEffectiveLevel())
 
 def retrieve_hash_store(filepath):
     """

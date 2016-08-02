@@ -64,6 +64,7 @@ LOG_ERROR_PATH = environ.get('LOG_ERROR_PATH') or \
                             join(PROJECT_PATH, LOG_ERROR_FILE_DEFAULT)
 LOG_LEVEL = environ.get('LOG_LEVEL') or \
             ('DEBUG' if DEBUG else CONSOLE_LOG_DEFAULT)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -85,7 +86,7 @@ LOGGING = {
         }
     },
     'handlers': {
-        'console': {
+        'console_stderr': {
             'class': 'logging.StreamHandler',
             'formatter': 'simple',
             'level': 'ERROR'
@@ -118,26 +119,42 @@ LOGGING = {
     'loggers': {
         'nameko': {
             'level': 'DEBUG',
-            'handlers': ['console_stderr', 'debug_file_handler']
+            # FIXME
+            # 'handlers': ['console_stderr', 'debug_file_handler']
+            'handlers': ['debug_file_handler']
         },
         # uncomment this to get logs only from these modules and comment root
         'fetch_url': {
             # DEBUG must be here to catch all possible logs
             # that will get filtered by the handler
             'level': 'DEBUG',
-            'handlers': ['console_stderr', 'console_stdout',
+            # 'handlers': ['console_stderr', 'console_stdout',
+            #              'debug_file_handler']
+            # FIXME: console_stdout is not taking the log level
+            'handlers': ['console_stderr',
                          'debug_file_handler']
         },
-        'fetch_url_util': {
+        'fetch_utils': {
             'level': 'DEBUG',
-            'handlers': ['console_stderr', 'console_stdout',
+            # 'handlers': ['console_stderr', 'console_stdout',
+            #              'debug_file_handler']
+            # FIXME: console_stdout is not taking the log level
+            'handlers': ['console_stderr',
                          'debug_file_handler']
         }
     },
-    'root': {
-        # # DEBUG must be here to catch all possible logs
-        # # that will get filtered by the handler
-        # 'level': 'DEBUG',
-        # 'handlers': ['console', 'debug_file_handler']
-    }
+    # 'root': {
+    #     # DEBUG must be here to catch all possible logs
+    #     # that will get filtered by the handler
+    #     'level': 'DEBUG',
+    #     'handlers': ['console', 'debug_file_handler']
+    # }
 }
+
+# nameko
+############################
+CONFIG_YAML_PATH = join(ROOT_PATH, 'config.yaml')
+WEB_SERVER_ADDRESS = '127.0.0.1:8000'
+# rabbitmq configuration
+# this doesn't have any effect here
+# AMQP_CONFIG = {'AMQP_URI': 'amqp://guest:guest@localhost'}
