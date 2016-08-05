@@ -54,7 +54,26 @@ def test_analyse_url():
 
 
 def test_post_url():
-    payload = '{"xpath": "//article", "agent_ip": "78.142.19.213", "content": "", "header": {"etag": "", "last_modified": ""}, "agent_type": "watch", "page_type": "tos", "key": "https://guardianproject.info/home/data-usage-and-protection-policies/", "timestamp_measurement": "2016-07-29T23:13:15.511Z", "sha256": "577cd1563b7d08dea2864cad528bdc3d3b8ab64e1ecd49a092e95535e9d1cdcc"}'
+    # payload = '{"xpath": "//article", "agent_ip": "78.142.19.213", "content": "", "header": {"etag": "", "last_modified": ""}, "agent_type": "watch", "page_type": "tos", "key": "https://guardianproject.info/home/data-usage-and-protection-policies/", "timestamp_measurement": "2016-07-29T23:13:15.511Z", "sha256": "577cd1563b7d08dea2864cad528bdc3d3b8ab64e1ecd49a092e95535e9d1cdcc"}'
+    # payload = {
+    #     u'attribute': u'page/content',
+    #     u'context': {
+    #         u'agent_ip': u'185.69.168.112',
+    #         u'agent_type': u'watch',
+    #         u'page_type': u'tos',
+    #         u'timestamp_measurement': u'2016-08-04T01:06:18.125782Z',
+    #         u'xpath': u'//article'
+    #     },
+    #     u'entity': u'https://guardianproject.info/home/data-usage-and-protection-policies/',
+    #     u'value': {
+    #         u'header': {
+    #             u'etag': u'',
+    #             u'last_modified': u''
+    #         },
+    #         "sha256_html": "577cd1563b7d08dea2864cad528bdc3d3b8ab64e1ecd49a092e95535e9d1cdcc"
+    #     }
+    # }
+    payload = {'attribute': 'page/content', 'value': {'header': {'last-modified': 'Mon, 01 Sep 1997 01:03:33 GMT', 'etag': 'None'}, 'sha256_html': '8626313e98732160ceb314ca1e6160697cd190d953974e2000802ff63eaf405c'}, 'context': {'xpath': "//div[@id='body']", 'timestamp_measurement': '2016-08-05T13:58:59.114779Z', 'agent_type': 'watch', 'page_type': 'tos', 'agent_ip': '46.166.188.203'}, 'entity': 'http://www.t-mobile.com/Templates/Popup.aspx?PAsset=Ftr_Ftr_TermsAndConditions&amp;print=true'}
     return_value = 200
     r = analyse_url(ANALYSE_PAGE_URL, payload)
     assert return_value == r

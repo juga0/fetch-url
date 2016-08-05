@@ -60,10 +60,10 @@ class FetchURLService(object):
         data = request.get_data()
         logger.debug('data %s', data)
         json_data = json.loads(data)
-        logger.debug('json data %s', json_data)
-        url = json_data.get('key')
-        logger.debug('key: %s', url)
-        header = json_data.get('header')
+        # logger.debug('json data %s', json_data)
+        url = json_data.get('entity')
+        logger.debug('entity: %s', url)
+        header = json_data.get('value').get('header')
         # NOTE: the content is not needed
         # content = json_data.get('content')
         # logger.debug('type content %s', type(content))
@@ -72,7 +72,7 @@ class FetchURLService(object):
         if header:
             etag = header.get('etag')
             logger.debug('etag: %s', etag)
-            last_modified = header.get('last_modified')
+            last_modified = header.get('last-modified')
             logger.debug('last_modified: %s', last_modified)
         ismodified, r = get_ismodified(url, etag=etag,
                                        last_modified=last_modified)
@@ -90,7 +90,7 @@ class FetchURLService(object):
                 # TODO: if in watch the trigger url is obtain from config
                 # where the url for analyse will be get?
                 # FIXME: remove hash in the data
-                json_data['sha256'] = hash_html
+                json_data['value']['sha256_html'] = hash_html
                 # FIXME: pass here all the dict as in watch_url
                 # r = analyse_url(ANALYSE_PAGE_URL, url, hash_html, etag,
                 #                 last_modified)
