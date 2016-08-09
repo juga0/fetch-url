@@ -149,7 +149,7 @@ LOGGING = {
             'level': 'DEBUG',
             # FIXME
             # 'handlers': ['console_stderr', 'debug_file_handler']
-            'handlers': ['debug_file_handler']
+            'handlers': ['console_stderr']
         },
         # uncomment this to get logs only from these modules and comment root
         'fetch_url': {
@@ -159,16 +159,14 @@ LOGGING = {
             # 'handlers': ['console_stderr', 'console_stdout',
             #              'debug_file_handler']
             # FIXME: console_stdout is not taking the log level
-            'handlers': ['console_stderr',
-                         'debug_file_handler']
+            'handlers': ['console_stderr', 'console_stderr']
         },
         'fetch_utils': {
             'level': 'DEBUG',
             # 'handlers': ['console_stderr', 'console_stdout',
             #              'debug_file_handler']
             # FIXME: console_stdout is not taking the log level
-            'handlers': ['console_stderr',
-                         'debug_file_handler']
+            'handlers': ['console_stderr', 'console_stderr']
         }
     },
     # 'root': {
